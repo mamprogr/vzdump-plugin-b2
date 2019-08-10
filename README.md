@@ -4,7 +4,6 @@ This plugin to `vzdump` will hook into after a single VM backup is done.
 It will 
 - split the `.vma.lzo` file that `vzdump` wrote to chunks of configurable size
   (default is 2 GB, B2 allows up to 5 GB=5*10^9 byte)
-- encrypt them using a symmetric key (password - no GPG keys used),
 - upload them to Backblaze B2 to a configurable path (default: hostname)
   under a configurable bucket in parallel,
 - delete the local copy of the backup and
@@ -24,7 +23,7 @@ storage devices for VMs and backup is a good idea.
 
      ```
      apt-get install -y git
-     git clone https://github.com/padelt/vzdump-plugin-b2.git /usr/local/bin/vzdump-plugin-b2
+     git clone https://github.com/mamprogr/vzdump-plugin-b2.git /usr/local/bin/vzdump-plugin-b2
      ```
 
    Alternatively transfer it manually to the server.
@@ -39,16 +38,7 @@ storage devices for VMs and backup is a good idea.
    If you put it anywhere else than the filename `upload-b2.config` in the
    same directory as `vzdump-plugin-upload-b2.sh`, also edit that script and
    make `CONFIG_FILE` point to it.
-1. In that config file, note GPG_PASSPHRASE_FILE. That should point to a
-   file containing your long, random and secret passphrase. You can use this
-   do generate one:
 
-
-     ```
-     test -r /root/vzdump-passphrase.txt || dd if=/dev/random bs=1 count=48 2>/dev/null | hexdump -v -e '"%02X"' > /root/vzdump-passphrase.txt
-     ```
-
-   **Remember and save that string** - your backups are unusable without it!
 1. Make `vzdump` aware of the script by adding a line to `/etc/vzdump.conf`:
 
      ```

@@ -9,8 +9,8 @@ if [ ! -r "$CONFIG_FILE" ] ; then
   echo "If it is somewhere else, change the second line of this script."
   exit 1
 fi
-if [ ! -x "$GPG_BINARY" ] || [ ! -x "$B2_BINARY" ] || [ ! -x "$JQ_BINARY" ] || [ ! -r "$GPG_PASSPHRASE_FILE" ] ; then
-  echo "Missing one of $GPG_BINARY, $B2_BINARY, $JQ_BINARY or $GPG_PASSPHRASE_FILE."
+if [ ! -x "$B2_BINARY" ] || [ ! -x "$JQ_BINARY" ] ; then
+  echo "Missing one of $B2_BINARY or $JQ_BINARY."
   echo "Or one of the binaries is not executable."
   exit 2
 fi
@@ -57,21 +57,6 @@ if [ $? -ne 0 ] ; then
 fi
 
 SHA="$DIR/$FILENAME.sha1sums"
-echo "CHECKING encrypted split sums"
-sed -r "s/ .*\/(.+)/  \1/g" < $SHA | grep "gpg$" | bash -c "cd $DIR;sha1sum -c -"
-if [ $? -ne 0 ] ; then
-  echo "Encrypted split sums did not successfully verify."
-  exit 7
-fi
-
-echo "OK: encrypted split sums"
-
-echo "DECRYPTING"
-ls -1 "$DIR/$FILENAME.split."*.gpg | xargs -n 1 -L 1 -r -I % -P $NUM_PARALLEL_GPG $GPG_BINARY --batch --passphrase-file $GPG_PASSPHRASE_FILE "%"
-if [ $? -ne 0 ] ; then
-  echo "Decrypting failed."
-  exit 8
-fi
 
 echo "CHECKING decrypted split sums"
 sed -r "s/ .*\/(.+)/  \1/g" < $SHA | egrep ".split.[0-9]+$" | bash -c "cd $DIR;sha1sum -c -"
@@ -79,9 +64,6 @@ if [ $? -ne 0 ] ; then
   echo "Decrypted split sums did not successfully verify."
   exit 9
 fi
-
-echo "DELETING encrypted splits"
-ls -1 "$DIR/$FILENAME.split."*.gpg | xargs rm
 
 echo "JOINING splits"
 cat "$DIR/$FILENAME.split."* > "$DIR/$FILENAME"

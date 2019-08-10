@@ -1,4 +1,3 @@
-GPG_PASSPHRASE_FILE=/root/vzdump-passphrase.txt
 B2_BUCKET=CHANGE_ME_TO_AN_EXISTING_BUCKET_NAME
 B2_ACCOUNT_ID=CHANGE_ME_TO_YOUR_ACCOUNT_ID
 B2_APPLICATION_KEY=CHANGEME_TO_YOUR_APPLICATION_KEY
@@ -11,8 +10,7 @@ NUM_PARALLEL_GPG=6
 # Secondary storage is where the unencrypted split files are stored temporarally.
 # If empty, this defaults to the dump dir.
 # This is useful if your dump directory cannot hold two copies of the backup.
-SECONDARY_STORAGE=
+SECONDARY_STORAGE=/var/lib/vz/dump/
 
-GPG_BINARY=/usr/bin/gpg
 B2_BINARY=/usr/local/bin/b2
 JQ_BINARY=/usr/local/bin/jq
